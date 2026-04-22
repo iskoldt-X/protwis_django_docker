@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  docker-build:
+    name: Docker Build & Smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          load: true
+          tags: protwis-django:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Smoke — Python & Django import
+        run: |
+          docker run --rm protwis-django:ci python -c "
+          import sys, django, psycopg2, rdkit
+          print(f'python  = {sys.version.split()[0]}')
+          print(f'django  = {django.get_version()}')
+          print(f'psycopg = {psycopg2.__version__}')
+          print(f'rdkit   = {rdkit.__version__}')
+          assert sys.version_info[:2] == (3, 8), 'expected Python 3.8'
+          assert django.get_version() == '2.2.17', 'expected Django 2.2.17'
+          "
+
+      - name: Smoke — critical deps import
+        run: |
+          docker run --rm protwis-django:ci python -c "
+          import Bio, datamol, freesasa, lxml, mmtf, openpyxl, reportlab, svglib
+          import rest_framework, rest_framework_swagger, polymorphic, debug_toolbar
+          import django_rdkit
+          print('all critical imports OK')
+          "
+
+      - name: Smoke — manage.py check (no DB)
+        run: |
+          # Run a trivial Django project inside the container to prove the
+          # runtime is usable without needing the real protwis source tree.
+          mkdir -p /tmp/smoke_src
+          cat > /tmp/smoke_src/manage.py << 'EOF'
+          import os, sys
+          os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'smoke_settings')
+          from django.core.management import execute_from_command_line
+          execute_from_command_line(sys.argv)
+          EOF
+          cat > /tmp/smoke_src/smoke_settings.py << 'EOF'
+          SECRET_KEY = 'ci-smoke'
+          INSTALLED_APPS = ['django.contrib.contenttypes', 'django.contrib.auth']
+          DATABASES = {'default': {'ENGINE': 'django.db.backends.sqlite3', 'NAME': ':memory:'}}
+          EOF
+          docker run --rm -v /tmp/smoke_src:/app/src protwis-django:ci \
+            python manage.py check
