@@ -10,6 +10,7 @@ Designed to work together with [postgres_rdkit_docker](https://github.com/protwi
 - **No conda.** Dependencies are pure-pip via [`uv`](https://github.com/astral-sh/uv); the image is ~5× smaller than the legacy conda-based setup and resolves in seconds.
 - **Multi-stage.** Build tools (`build-essential`, `*-dev` headers) live in the builder stage only; the final image ships runtime shared libraries.
 - **Version-pinned baseline.** Dependencies mirror the legacy pins verbatim to keep the image a drop-in replacement. Upgrades go through a CI matrix (see `docs/upgrading.md` — TODO).
+- **Environment split (Planned).** Currently, development tools (`django-debug-toolbar`, `ipython`, `Sphinx`) are bundled in the default image. Future iterations will separate these into dedicated development and production image targets.
 
 ## Repository layout
 

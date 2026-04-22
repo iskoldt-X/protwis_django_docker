@@ -361,20 +361,6 @@ wheels = [
 ]
 
 [[package]]
-name = "docker"
-version = "7.1.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pywin32", marker = "sys_platform == 'win32'" },
-    { name = "requests" },
-    { name = "urllib3" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/91/9b/4a2ea29aeba62471211598dac5d96825bb49348fa07e906ea930394a83ce/docker-7.1.0.tar.gz", hash = "sha256:ad8c70e6e3f8926cb8a92619b832b4ea5299e2831c14284663184e200546fa6c", size = 117834, upload-time = "2024-05-23T11:13:57.216Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/e3/26/57c6fb270950d476074c087527a558ccb6f4436657314bfb6cdf484114c4/docker-7.1.0-py3-none-any.whl", hash = "sha256:c96b93b7f0a746f9e77d325bcfb87422a3d8bd4f03136ae8a85b37f1898d5fc0", size = 147774, upload-time = "2024-05-23T11:13:55.01Z" },
-]
-
-[[package]]
 name = "docutils"
 version = "0.20.1"
 source = { registry = "https://pypi.org/simple" }
@@ -876,7 +862,6 @@ dependencies = [
     { name = "django-rdkit" },
     { name = "django-rest-swagger" },
     { name = "djangorestframework" },
-    { name = "docker" },
     { name = "freesasa" },
     { name = "google-api-python-client" },
     { name = "ipython" },
@@ -913,7 +898,6 @@ requires-dist = [
     { name = "django-rdkit", git = "https://github.com/rdkit/django-rdkit.git" },
     { name = "django-rest-swagger", specifier = "==2.2.0" },
     { name = "djangorestframework", specifier = "==3.9.3" },
-    { name = "docker" },
     { name = "freesasa", specifier = "==2.1.0" },
     { name = "google-api-python-client", specifier = "==1.7.11" },
     { name = "ipdb", marker = "extra == 'dev'" },
@@ -1021,15 +1005,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/56/db/b8721d71d945e6a8ac63c0fc900b2067181dbb50805958d4d4661cf7d277/pytz-2026.1.post1.tar.gz", hash = "sha256:3378dde6a0c3d26719182142c56e60c7f9af7e968076f31aae569d72a0358ee1", size = 321088, upload-time = "2026-03-03T07:47:50.683Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/10/99/781fe0c827be2742bcc775efefccb3b048a3a9c6ce9aec0cbf4a101677e5/pytz-2026.1.post1-py2.py3-none-any.whl", hash = "sha256:f2fd16142fda348286a75e1a524be810bb05d444e5a081f37f7affc635035f7a", size = 510489, upload-time = "2026-03-03T07:47:49.167Z" },
-]
-
-[[package]]
-name = "pywin32"
-version = "311"
-source = { registry = "https://pypi.org/simple" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/75/20/6cd04d636a4c83458ecbb7c8220c13786a1a80d3f5fb568df39310e73e98/pywin32-311-cp38-cp38-win32.whl", hash = "sha256:6c6f2969607b5023b0d9ce2541f8d2cbb01c4f46bc87456017cf63b73f1e2d8c", size = 8766775, upload-time = "2025-07-14T20:12:55.029Z" },
-    { url = "https://files.pythonhosted.org/packages/ff/6c/94c10268bae5d0d0c6509bdfb5aa08882d11a9ccdf89ff1cde59a6161afb/pywin32-311-cp38-cp38-win_amd64.whl", hash = "sha256:c8015b09fb9a5e188f83b7b04de91ddca4658cee2ae6f3bc483f0b21a77ef6cd", size = 9594743, upload-time = "2025-07-14T20:12:57.59Z" },
 ]
 
 [[package]]
