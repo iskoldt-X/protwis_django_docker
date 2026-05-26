@@ -13,7 +13,7 @@ You have two realistic options on Windows. Pick one and stick with it for a sess
 | Shell | Works for everything? | Notes |
 |---|---|---|
 | **Git Bash** (Git for Windows) | Yes | Bash-compatible. All commands in `onboarding.md` work unchanged. Ships `curl`, `gunzip`, `find`, `file`. The path of least resistance. |
-| **PowerShell 5.1 / 7** | Mostly | Needs command translation, and one step (the gzipped dump pipe) is awkward — see §5. |
+| **PowerShell 5.1 / 7** | Mostly | Needs command translation, and one step (the gzipped dump pipe) is awkward — see §6. |
 
 The rest of this doc assumes PowerShell unless noted. Git Bash users can read along; the bash equivalents are exactly what's in `onboarding.md`.
 
@@ -88,7 +88,59 @@ docker compose ps
 
 Wait until `gpcrdb-db` shows `(healthy)`. On first run, Docker pulls ~2 GB of images, so give it a few minutes.
 
-## 5. Loading the database dump (the PowerShell trap)
+## 5. Switching the protwis source to your own fork
+
+If you maintain your own `protwis` fork and want to work on your branches inside this stack, repoint the `protwis` subfolder's `origin` at your fork (keeping the canonical upstream as `upstream` so you can still pull from it).
+
+```powershell
+cd C:\Users\<you>\Documents\protwis_docker\protwis
+git remote rename origin upstream
+git remote add origin https://github.com/<YOUR_GH_USERNAME>/protwis.git
+git remote -v   # sanity: origin = your fork, upstream = protwis/protwis
+git fetch origin
+git branch -r   # see what's on your fork
+git checkout -b <your-branch> origin/<your-branch>
+```
+
+From now on, `git pull` / `git push` defaults to your fork; `git fetch upstream` is how you pick up new commits from `protwis/protwis`.
+
+### Gotcha: your branch may not carry `settings_local_docker.py`
+
+The app container starts with `DJANGO_SETTINGS_MODULE=protwis.settings_local_docker`. That file lives only on upstream's `dev_build` branch and anything forked from it. If your work branch was forked from `master` or an older base, the app crashes on startup with:
+
+```
+ModuleNotFoundError: No module named 'protwis.settings_local_docker'
+```
+
+Check whether your branch has it:
+```powershell
+git ls-files protwis/settings_local_docker.py
+```
+Empty output = file is missing. Pick one fix.
+
+**Option A — Cherry-pick just the two docker settings files** (no other `dev_build` history):
+```powershell
+git fetch upstream
+git checkout upstream/dev_build -- protwis/settings_local_docker.py protwis/settings_production_docker.py
+git add protwis/settings_local_docker.py protwis/settings_production_docker.py
+git commit -m "Add docker-stack settings files from dev_build"
+```
+
+**Option B — Merge `upstream/dev_build` into your branch** (also picks up any other `dev_build` updates):
+```powershell
+git fetch upstream
+git merge upstream/dev_build
+```
+Resolve any conflicts in VS Code's merge editor, then commit the merge.
+
+**Then restart the app container so it sees the new files:**
+```powershell
+cd ..\protwis_django_docker
+docker compose restart app
+docker compose logs -f app    # wait for "Starting development server at http://0.0.0.0:8000/"
+```
+
+## 6. Loading the database dump (the PowerShell trap)
 
 This is the one step where PowerShell genuinely gets in your way.
 
@@ -116,7 +168,7 @@ You can drop straight back into PowerShell after.
 This works in PowerShell, but the uncompressed dump is ~26 GB on disk temporarily:
 
 ```powershell
-# Download (use curl.exe, NOT the PowerShell `curl` alias — see §6)
+# Download (use curl.exe, NOT the PowerShell `curl` alias — see §7)
 curl.exe -L https://files.gpcrdb.org/protwis_sp.sql.gz -o "$env:USERPROFILE\protwis.sql.gz"
 
 # Decompress via 7-Zip if installed
@@ -142,7 +194,7 @@ docker exec gpcrdb-db bash -c "gunzip -c /tmp/protwis.sql.gz | psql -U protwis -
 
 All three take **10–25 minutes** on Windows. Don't interrupt — the load runs as a single transaction (`-1`), and Postgres looks empty from outside until the very last second.
 
-## 6. PowerShell command translations cheat sheet
+## 7. PowerShell command translations cheat sheet
 
 | Bash / `onboarding.md` | PowerShell equivalent |
 |---|---|
@@ -158,7 +210,7 @@ All three take **10–25 minutes** on Windows. Don't interrupt — the load runs
 
 `docker`, `docker compose`, and the inside-container `python manage.py ...` parts of every command are **identical** across both shells.
 
-## 7. Daily-use commands (Windows-friendly)
+## 8. Daily-use commands (Windows-friendly)
 
 These work unchanged in PowerShell and Git Bash. Run from inside `protwis_django_docker\`:
 
@@ -178,7 +230,7 @@ docker compose logs -f app
 
 The `-T` (no TTY allocation) is **important in PowerShell** — otherwise you can get encoding glitches when Docker negotiates a Windows terminal.
 
-## 8. Tested commands on Windows + Docker Desktop
+## 9. Tested commands on Windows + Docker Desktop
 
 To sanity-check the five command categories from `onboarding.md` §8, the following were run on a fresh Windows install with Docker Desktop (WSL2 backend):
 
@@ -192,19 +244,20 @@ To sanity-check the five command categories from `onboarding.md` §8, the follow
 
 **The ~4× slowdown on `build_links`** is the most useful number here. It reflects the Docker Desktop bind-mount cost between Windows host paths and the Linux container backend — every Python import in the bind-mounted `/app/src` traverses the 9P/virtiofs boundary. This is just how Docker Desktop on Windows works with host-path bind mounts; there's no setting that makes it native-speed. For interactive editing and shell-style commands it's fine. For long build pipelines (category 4), expect noticeably longer wall times than the figures quoted in `onboarding.md` — plan accordingly.
 
-## 9. Windows-specific troubleshooting
+## 10. Windows-specific troubleshooting
 
 | Symptom | Cause | Fix |
 |---|---|---|
 | `bash: ./script.sh: /bin/bash^M: bad interpreter` | Shell script in bind-mounted source has CRLF line endings from Git autocrlf. | See §3. Set `core.autocrlf=input`, re-checkout, or convert the file with `dos2unix`. |
 | `Invoke-WebRequest : A parameter cannot be found that matches parameter name 'o'` | You called `curl` (PowerShell alias for `Invoke-WebRequest`) instead of `curl.exe`. | Use `curl.exe -L URL -o path`. |
+| `ModuleNotFoundError: No module named 'protwis.settings_local_docker'` | The branch checked out in `protwis/` doesn't carry the docker settings file (forked off `master` or an older base). | See §5. Cherry-pick the two settings files from `upstream/dev_build`, or merge `upstream/dev_build` in. |
 | `psql: FATAL: role "<your-windows-username>" does not exist` | You ran `psql` directly on the Windows host, hitting a different PG. | All `psql` should go via `docker exec -i gpcrdb-db psql -U protwis -d protwis ...`. |
-| Dump load corrupts / errors halfway in PowerShell | PowerShell binary pipe re-encodes the gzipped stream. | Use Option A, B, or C from §5. |
+| Dump load corrupts / errors halfway in PowerShell | PowerShell binary pipe re-encodes the gzipped stream. | Use Option A, B, or C from §6. |
 | `Error response from daemon: Ports are not available: ... bind: An attempt was made to access a socket in a way forbidden` | A reserved Windows port range overlaps with 5432/8000/8888 (the Hyper-V "excluded port range"). | Run `netsh interface ipv4 show excludedportrange protocol=tcp` to check; either change ports in `.env`, or restart the Host Network Service: `net stop winnat && net start winnat`. |
 | Django auto-reload misses file changes | Inotify events across the Windows host → Docker Desktop Linux backend bind-mount can be lossy. | `docker compose restart app` to pick up the change. If it happens often, edit the same file once more to nudge the watcher, or keep a `docker compose logs -f app` window open so you notice when the reload didn't fire. |
 | `gpcrdb-db` won't start, log says `could not resize shared memory segment` | Default `shm_size` interaction with WSL2. | The compose file already sets `shm_size: 2g`; if this still happens, increase Docker Desktop's resource allocation in Settings → Resources. |
 | Docker Desktop WSL2 VHD grows huge after a `docker compose down -v` cycle | The VHD doesn't auto-shrink. | Quit Docker Desktop, run `wsl --shutdown`, then optimise: `Optimize-VHD -Path "$env:LOCALAPPDATA\Docker\wsl\disk\docker_data.vhdx" -Mode Full` (requires elevated PowerShell + Hyper-V module). |
 
-## 10. When in doubt, drop into Git Bash
+## 11. When in doubt, drop into Git Bash
 
 If a step in `onboarding.md` looks like it should "just work" but doesn't in PowerShell, opening Git Bash and running the literal upstream command is almost always faster than translating. Both shells share the same Docker engine and the same `.env`, so you can flip between them mid-session without restarting anything.
