@@ -9,7 +9,7 @@ services:
       context: .
       args:
         PYTHON_VERSION: "3.8"
-    image: ghcr.io/iskoldt-x/protwis_django_docker:latest
+    image: ghcr.io/protwis/protwis_django_docker:latest
     container_name: ${COMPOSE_PROJECT_NAME:-gpcrdb}-app
     restart: unless-stopped
     environment:
@@ -30,7 +30,7 @@ services:
         condition: service_healthy
 
   db:
-    image: ghcr.io/iskoldt-x/postgres_rdkit_docker:latest
+    image: ghcr.io/protwis/postgres_rdkit_docker:latest
     container_name: ${COMPOSE_PROJECT_NAME:-gpcrdb}-db
     restart: unless-stopped
     shm_size: 2g

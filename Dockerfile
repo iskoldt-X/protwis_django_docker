@@ -49,7 +49,7 @@ FROM python:${PYTHON_VERSION}-slim-bookworm
 
 LABEL org.opencontainers.image.title="protwis Django Runtime"
 LABEL org.opencontainers.image.description="Python runtime for the protwis Django application (GPCRdb)"
-LABEL org.opencontainers.image.source="https://github.com/iskoldt-x/protwis_django_docker"
+LABEL org.opencontainers.image.source="https://github.com/protwis/protwis_django_docker"
 LABEL org.opencontainers.image.licenses="Apache-2.0"
 
 # Runtime shared libraries + bioinformatics CLIs that protwis shells out to.

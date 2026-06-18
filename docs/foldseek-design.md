@@ -477,7 +477,7 @@ its DB layout — but it can stay in the signature for minimal diff and so
   foldseek:
     build:
       context: ./foldseek
-    image: ghcr.io/iskoldt-x/protwis_foldseek:latest
+    image: ghcr.io/protwis/protwis_foldseek:latest
     container_name: ${COMPOSE_PROJECT_NAME:-gpcrdb}-foldseek
     restart: unless-stopped
     environment:

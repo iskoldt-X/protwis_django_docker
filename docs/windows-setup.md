@@ -65,7 +65,7 @@ Set-Location $workspace
 
 git clone -b dev_build https://github.com/protwis/protwis
 git clone https://github.com/protwis/gpcrdb_data
-git clone https://github.com/iskoldt-x/protwis_django_docker
+git clone https://github.com/protwis/protwis_django_docker
 ```
 
 > **Why the `dev_build` branch?** Same reason as the main doc — it ships the `settings_*_docker.py` files the container expects. Cloning `master` will crash the app on startup.

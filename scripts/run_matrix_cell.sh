@@ -43,7 +43,7 @@ esac
 mkdir -p "$OUT"
 
 # ghcr requires repository names to be lowercase. github.repository_owner
-# can have uppercase letters (e.g. iskoldt-X), so normalise once here.
+# can have uppercase letters (e.g. protwis), so normalise once here.
 GH_OWNER_LC=$(printf '%s' "${GH_OWNER:-}" | tr '[:upper:]' '[:lower:]')
 
 # Tag suffix: drop dots so it's a valid OCI tag.

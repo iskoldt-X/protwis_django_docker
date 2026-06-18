@@ -93,7 +93,7 @@ def main():
     djangos = sorted({c["django"] for c in cells}, key=ver_key)
     rdkits = sorted({c["rdkit"] for c in cells}, key=ver_key)
 
-    gh_owner = os.environ.get("GH_OWNER", "iskoldt-x")
+    gh_owner = os.environ.get("GH_OWNER", "protwis")
     run_url = os.environ.get("RUN_URL", "")
     now = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 

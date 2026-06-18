@@ -16,7 +16,7 @@
 #   KEY_MODELLER on the container; modeller reads the env var first and
 #   ignores the placeholder in /usr/lib/modeller<VER>/modlib/modeller/config.py.
 
-ARG BASE_IMAGE=ghcr.io/iskoldt-x/protwis_django_docker
+ARG BASE_IMAGE=ghcr.io/protwis/protwis_django_docker
 ARG BASE_TAG=latest
 FROM ${BASE_IMAGE}:${BASE_TAG}
 

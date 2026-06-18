@@ -36,7 +36,7 @@ Open a terminal and create a workspace directory (e.g., `~/GitHub`), then clone 
 mkdir -p ~/GitHub && cd ~/GitHub
 git clone -b dev_build https://github.com/protwis/protwis
 git clone https://github.com/protwis/gpcrdb_data
-git clone https://github.com/iskoldt-x/protwis_django_docker
+git clone https://github.com/protwis/protwis_django_docker
 ```
 
 > **Why the `dev_build` branch?** It carries the additive `settings_local_docker.py` / `settings_production_docker.py` files. The app container runs with `DJANGO_SETTINGS_MODULE=protwis.settings_local_docker`; clone the default branch instead and it crashes at startup with `ModuleNotFoundError`.
@@ -214,7 +214,7 @@ When upstream developers change system dependencies (like adding a new Ubuntu pa
 
 ### Trying a different (Python, Django, RDKit) combination
 
-The repo also publishes one image tag per combination of major versions, produced by a manually-triggered compatibility-matrix workflow. See [`docs/compatibility-matrix.md`](compatibility-matrix.md) for the live list — every green cell links to a pullable tag like `ghcr.io/iskoldt-x/protwis_django_docker:matrix-py311-dj42-rdk202409`. To try one, set `app.image` to that tag in `docker-compose.yml` and `docker compose up -d --force-recreate app`. These are *probe* images: the docker env is known to build, but upstream protwis code may or may not run on a non-baseline combination.
+The repo also publishes one image tag per combination of major versions, produced by a manually-triggered compatibility-matrix workflow. See [`docs/compatibility-matrix.md`](compatibility-matrix.md) for the live list — every green cell links to a pullable tag like `ghcr.io/protwis/protwis_django_docker:matrix-py311-dj42-rdk202409`. To try one, set `app.image` to that tag in `docker-compose.yml` and `docker compose up -d --force-recreate app`. These are *probe* images: the docker env is known to build, but upstream protwis code may or may not run on a non-baseline combination.
 
 ### Adding a new version to the matrix
 

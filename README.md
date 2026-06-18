@@ -1,12 +1,12 @@
 # protwis_django_docker
 
-[![CI](https://github.com/iskoldt-x/protwis_django_docker/actions/workflows/ci.yml/badge.svg)](https://github.com/iskoldt-x/protwis_django_docker/actions/workflows/ci.yml)
-[![Docker Publish](https://github.com/iskoldt-x/protwis_django_docker/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/iskoldt-x/protwis_django_docker/actions/workflows/docker-publish.yml)
+[![CI](https://github.com/protwis/protwis_django_docker/actions/workflows/ci.yml/badge.svg)](https://github.com/protwis/protwis_django_docker/actions/workflows/ci.yml)
+[![Docker Publish](https://github.com/protwis/protwis_django_docker/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/protwis/protwis_django_docker/actions/workflows/docker-publish.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
 A reproducible Docker environment for the [protwis](https://github.com/protwis/protwis) Django application — the backbone of [GPCRdb](https://gpcrdb.org). One `docker compose up` brings the full stack online: Django app, PostgreSQL with the RDKit cartridge, and Adminer.
 
-Designed as the runtime companion to [postgres_rdkit_docker](https://github.com/iskoldt-x/postgres_rdkit_docker), replacing the legacy conda-based local setup with a single uv-managed Python environment built on `python:3.8-slim-bookworm`.
+Designed as the runtime companion to [postgres_rdkit_docker](https://github.com/protwis/postgres_rdkit_docker), replacing the legacy conda-based local setup with a single uv-managed Python environment built on `python:3.8-slim-bookworm`.
 
 ---
 
@@ -50,7 +50,7 @@ Tested on macOS (Apple Silicon and Intel) and Linux. On Windows, run inside WSL2
    mkdir -p ~/GitHub && cd ~/GitHub
    git clone -b dev_build https://github.com/protwis/protwis
    git clone https://github.com/protwis/gpcrdb_data
-   git clone https://github.com/iskoldt-x/protwis_django_docker
+   git clone https://github.com/protwis/protwis_django_docker
    ```
    The `dev_build` branch is required — it carries the additive `settings_*_docker.py` files that `DJANGO_SETTINGS_MODULE` resolves to.
 
@@ -160,7 +160,7 @@ Useful for code-vs-code, dump-vs-dump, or before-vs-after comparisons.
 | Workflow | Trigger | What it does |
 |---|---|---|
 | [`ci.yml`](.github/workflows/ci.yml) | every push and PR to `main` | builds the image and runs smoke tests (critical imports, Django boot, `manage.py check`) |
-| [`docker-publish.yml`](.github/workflows/docker-publish.yml) | tags matching `v*` | builds multi-arch (amd64 + arm64) and pushes to `ghcr.io/iskoldt-x/protwis_django_docker` |
+| [`docker-publish.yml`](.github/workflows/docker-publish.yml) | tags matching `v*` | builds multi-arch (amd64 + arm64) and pushes to `ghcr.io/protwis/protwis_django_docker` |
 | [`compatibility-matrix.yml`](.github/workflows/compatibility-matrix.yml) | manual (`workflow_dispatch`) | probes 36 (Python × Django × RDKit) combinations; pushes a per-combo image tag for every cell that builds and writes the result to [`docs/compatibility-matrix.md`](docs/compatibility-matrix.md). Used to plan upgrades |
 
 The published image is anonymously pullable, so `docker compose up` works on a fresh machine with no `docker login` step.

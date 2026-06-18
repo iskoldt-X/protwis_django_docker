@@ -9,7 +9,7 @@ authors = [
     { name = "protwis" },
 ]
 
-# Sourced from iskoldt/protwis_docker requirements.txt (2025 baseline).
+# Sourced from protwis/protwis_docker requirements.txt (2025 baseline).
 # Pins preserved verbatim — any upgrade should go through a CI matrix.
 dependencies = [
     "Django==2.2.17",
@@ -41,7 +41,7 @@ dependencies = [
     "google-api-python-client==1.7.11",
     "oauth2client==4.1.3",
     # datamol 0.6.8 imports canonicalize_tautomer_smiles, removed in rdkit 2023.09+.
-    # iskoldt's conda-forge rdkit ships this symbol; the pip wheel does not.
+    # protwis's conda-forge rdkit ships this symbol; the pip wheel does not.
     # Pin below that boundary until datamol is upgraded alongside rdkit.
     "rdkit<2023.9",
 ]
